@@ -3,7 +3,9 @@ package com.amazonaws.param;
 public class Kinesis {
     public static final String region = "cn-northwest-1";
     public static final String outputStreamName = "metrics-ds";
-    public static final String accessKey = "AKIAQMS6D5EIUW5ZS5V6";
-    public static final String accessSecret = "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";
+    // 在本地测试的时候，你访问你的aws服务需要如下凭证，在您的vpc环境是不需要的
+    // 请替换，下面的是凭证做参考（下面凭证无效）
+    public static final String accessKey = "abcdefg";
+    public static final String accessSecret = "你的凭证密码";
 
 }
