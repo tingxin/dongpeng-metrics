@@ -10,7 +10,7 @@ public class CustomerOrder implements java.io.Serializable{
     private int orderId;
     private String status;
     private int goodCount;
-    private float amount;
+    private double amount;
     private Date createTime;
 
     private static final String UNKNOWN = "unknown";
@@ -99,7 +99,7 @@ public class CustomerOrder implements java.io.Serializable{
         this.goodCount = goodCount;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 

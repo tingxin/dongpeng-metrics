@@ -1,3 +1,4 @@
 target
 .idea
 aws-kinesis-analytics-java-apps.iml
+src/main/java/com/amazonaws/param/Kinesis.java

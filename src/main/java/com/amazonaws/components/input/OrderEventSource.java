@@ -1,22 +1,51 @@
 package com.amazonaws.components.input;
 
+import com.amazonaws.bean.OrderEvent;
 import com.amazonaws.param.Kinesis;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kinesis.FlinkKinesisConsumer;
 import org.apache.flink.streaming.connectors.kinesis.config.ConsumerConfigConstants;
 
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Properties;
 
 public class OrderEventSource {
-    public static DataStream<String> create(StreamExecutionEnvironment env) {
+    public static DataStream<OrderEvent> create(StreamExecutionEnvironment env) {
         Properties inputProperties = new Properties();
         inputProperties.setProperty(ConsumerConfigConstants.AWS_REGION, Kinesis.region);
         inputProperties.setProperty(ConsumerConfigConstants.AWS_ACCESS_KEY_ID, Kinesis.accessKey);
         inputProperties.setProperty(ConsumerConfigConstants.AWS_SECRET_ACCESS_KEY, Kinesis.accessSecret);
         inputProperties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "LATEST");
 
-        return env.addSource(new FlinkKinesisConsumer<>("mock-order-event", new SimpleStringSchema(), inputProperties));
+        DataStream<String> strDs = env.addSource(new FlinkKinesisConsumer<>("mock-order-event", new SimpleStringSchema(), inputProperties));
+
+        ObjectMapper jsonParser = new ObjectMapper();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        DataStream<OrderEvent> event = strDs.map(new MapFunction<String, OrderEvent>() {
+            @Override
+            public OrderEvent map(String s) throws Exception {
+                JsonNode jsonNode = jsonParser.readValue(s, JsonNode.class);
+                OrderEvent item = new OrderEvent();
+                item.setUserMail(jsonNode.get("user_mail").asText());
+                item.setStatus(jsonNode.get("status").asText());
+                item.setGoodCount(jsonNode.get("good_count").asInt());
+                item.setCity(jsonNode.get("city").asText());
+                item.setAmount(jsonNode.get("amount").asDouble());
+
+                String strCreateTime = jsonNode.get("create_time").asText();
+                String strUpdateTime = jsonNode.get("update_time").asText();
+                item.setCreateTime(formatter.parse(strCreateTime));
+                item.setUpdateTime(formatter.parse(strUpdateTime));
+                return item;
+            }
+        });
+        return event;
     }
 }

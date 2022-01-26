@@ -1,5 +1,6 @@
 package com.amazonaws.services.metrics;
 
+import com.amazonaws.bean.OrderEvent;
 import com.amazonaws.components.input.OrderEventSource;
 import com.amazonaws.services.kinesisanalytics.runtime.KinesisAnalyticsRuntime;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -27,8 +28,8 @@ public class DemoJob {
 
         // set up the streaming execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        DataStream<OrderEvent> input = OrderEventSource.create(env);
 
-        DataStream<String> input = OrderEventSource.create(env);
         input.print("toStd");
 
         env.execute("Flink Streaming Java API Skeleton");

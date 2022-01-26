@@ -8,7 +8,7 @@ public class OrderEvent implements java.io.Serializable{
     private String status;
     private int goodCount;
     private String city;
-    private float amount;
+    private double amount;
     private Date createTime;
 
     public int getOrderId() {
@@ -51,11 +51,11 @@ public class OrderEvent implements java.io.Serializable{
         this.city = city;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(float amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -76,4 +76,14 @@ public class OrderEvent implements java.io.Serializable{
     }
 
     private Date updateTime;
+
+    @Override
+    public String toString() {
+        return "OrderEvent{" +
+                "userMail='" + userMail + '\'' +
+                ", goodCount=" + goodCount +
+                ", city='" + city + '\'' +
+                ", amount=" + amount +
+                '}';
+    }
 }
