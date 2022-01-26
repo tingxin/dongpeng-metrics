@@ -82,8 +82,13 @@ public abstract class AbstractAsyncWithCacheFunction<I, O, C> extends RichAsyncF
 
     @Override
     public void close() throws Exception {
-        sqlClient.close();
-        cache.invalidateAll();
+        if(sqlClient !=null) {
+            sqlClient.close();
+        }
+        if(cache!=null){
+            cache.invalidateAll();
+        }
+
     }
 
     protected abstract String buildSQL(I input);
