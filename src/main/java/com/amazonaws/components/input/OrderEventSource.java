@@ -20,9 +20,12 @@ public class OrderEventSource {
     public static DataStream<OrderEvent> create(StreamExecutionEnvironment env) {
         Properties inputProperties = new Properties();
         inputProperties.setProperty(ConsumerConfigConstants.AWS_REGION, Kinesis.region);
+        inputProperties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "LATEST");
+
+        // 部署到你aws kinesis data analytics 以后，无需这个凭证
+        // 请注释
         inputProperties.setProperty(ConsumerConfigConstants.AWS_ACCESS_KEY_ID, Kinesis.accessKey);
         inputProperties.setProperty(ConsumerConfigConstants.AWS_SECRET_ACCESS_KEY, Kinesis.accessSecret);
-        inputProperties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "LATEST");
 
         DataStream<String> strDs = env.addSource(new FlinkKinesisConsumer<>("mock-order-event", new SimpleStringSchema(), inputProperties));
 

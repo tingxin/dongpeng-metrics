@@ -1,6 +1,6 @@
 package com.amazonaws.common;
 
-public class DBConf {
+public class DBConf implements java.io.Serializable {
     private String jdbcUri;
     private String driverClass;
     private Integer maxPoolSize = 20;

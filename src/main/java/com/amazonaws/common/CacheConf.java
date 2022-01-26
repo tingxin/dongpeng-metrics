@@ -10,15 +10,11 @@ public class CacheConf extends DBConf {
         return writeExpireDuration;
     }
 
-    public void setWriteExpireDuration(Duration writeExpireDuration) {
+    public CacheConf(Duration writeExpireDuration, int maxSize) {
         this.writeExpireDuration = writeExpireDuration;
+        this.maxSize = maxSize;
     }
-
     public int getMaxSize() {
         return maxSize;
-    }
-
-    public void setMaxSize(int maxSize) {
-        this.maxSize = maxSize;
     }
 }

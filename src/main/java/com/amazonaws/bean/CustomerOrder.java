@@ -115,4 +115,12 @@ public class CustomerOrder implements java.io.Serializable{
         this.createTime = createTime;
     }
 
+    @Override
+    public String toString() {
+        return "CustomerOrder{" +
+                "email='" + email + '\'' +
+                ", sex='" + sex + '\'' +
+                ", goodCount=" + goodCount +
+                '}';
+    }
 }

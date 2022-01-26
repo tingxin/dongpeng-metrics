@@ -53,7 +53,9 @@ public class GetCompanyDetailFunc extends AbstractAsyncWithCacheFunction<OrderEv
 
         @Override
         protected Collection<CustomerOrder> buildOutMessage(OrderEvent input, Map<String, Customer> cachedRecord) {
-                return null;
+                Customer c = cachedRecord.get(input.getUserMail());
+                CustomerOrder co = new CustomerOrder(c, input);
+                return Collections.singletonList(co);
         }
 
         @Override
@@ -72,7 +74,7 @@ public class GetCompanyDetailFunc extends AbstractAsyncWithCacheFunction<OrderEv
 
                 for (JsonObject row : resultSet.getRows()) {
                         String sex = row.getString("sex");
-                        String level = row.getString("level");
+                        int level = row.getInteger("level");
 
                         Customer m = new Customer(input.getUserMail(), sex,level);
                         CustomerOrder co = new CustomerOrder(m, input);
