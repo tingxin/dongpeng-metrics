@@ -172,7 +172,7 @@
                             </filters>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.amazonaws.services.metrics.DemoJob</mainClass>
+                                    <mainClass>com.amazonaws.services.DemoJob</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

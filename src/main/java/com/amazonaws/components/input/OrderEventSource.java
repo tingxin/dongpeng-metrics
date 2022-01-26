@@ -12,6 +12,7 @@ import org.apache.flink.streaming.connectors.kinesis.FlinkKinesisConsumer;
 import org.apache.flink.streaming.connectors.kinesis.config.ConsumerConfigConstants;
 
 
+import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Properties;
@@ -30,6 +31,7 @@ public class OrderEventSource {
         DataStream<String> strDs = env.addSource(new FlinkKinesisConsumer<>("mock-order-event", new SimpleStringSchema(), inputProperties));
 
         ObjectMapper jsonParser = new ObjectMapper();
+
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         DataStream<OrderEvent> event = strDs.map(new MapFunction<String, OrderEvent>() {
             @Override
