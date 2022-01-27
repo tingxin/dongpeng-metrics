@@ -146,6 +146,7 @@ public abstract class AbstractAsyncWithCacheFunction<I, O, C> extends RichAsyncF
 
     @Override
     public void timeout(I input, ResultFuture<O> resultFuture) throws Exception {
+        LOGGER.error("Error executing query timeout for " + input.toString());
         handleFailure(input, resultFuture);
     }
 }

@@ -43,8 +43,9 @@ public class OrderApp {
             byte[] bytes = jsonParser.writeValueAsBytes(item);
             return new String(bytes);
         }).disableChaining().name("serialize");
-
+        // bds.print("output");
         bds.addSink(CustomOrderStrSink.create()).disableChaining().name("output");
+
     }
 
     DataStream<OrderEvent> addWaterMark(DataStream<OrderEvent> input) {

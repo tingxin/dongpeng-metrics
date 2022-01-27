@@ -19,7 +19,7 @@ import java.util.*;
 
 public class GetCompanyDetailFunc extends AbstractAsyncWithCacheFunction<OrderEvent, CustomerOrder, Customer> {
         private static final Logger LOGGER = LoggerFactory.getLogger(GetCompanyDetailFunc.class);
-        private static final String SQLSTS = "SELECT sex, level FROM customer where email = '%s'";
+        private static final String SQL_FORMAT = "SELECT sex, level FROM customer where email = '%s'";
 
         private static final String METRIC_NAME_ASYNC_CALL_SUCCESS_COUNT = "metric.async.GetCompanyDetailFunc.success";
         private static final String METRIC_NAME_ASYNC_CALL_FAIL_COUNT = "metric.async.GetCompanyDetailFunc.fail";
@@ -45,7 +45,9 @@ public class GetCompanyDetailFunc extends AbstractAsyncWithCacheFunction<OrderEv
 
         @Override
         protected String buildSQL(OrderEvent input) {
-                return String.format(SQLSTS, input.getUserMail());
+                String sql = String.format(SQL_FORMAT, input.getUserMail());
+                LOGGER.debug(sql);
+                return sql;
         }
 
         @Override
@@ -105,7 +107,7 @@ public class GetCompanyDetailFunc extends AbstractAsyncWithCacheFunction<OrderEv
 
         @Override
         protected void handleFailure(OrderEvent input, ResultFuture<CustomerOrder> output) {
+                output.complete(Collections.emptyList());
                 failCounter.inc();
-
         }
 }

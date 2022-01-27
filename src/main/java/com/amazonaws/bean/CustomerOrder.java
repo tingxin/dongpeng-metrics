@@ -5,7 +5,7 @@ import java.util.Date;
 public class CustomerOrder implements java.io.Serializable{
     private String email;
     private String sex;
-    private String level;
+    private int level;
     private String city;
     private int orderId;
     private String status;
@@ -20,6 +20,7 @@ public class CustomerOrder implements java.io.Serializable{
 
     public CustomerOrder(Customer c, OrderEvent e) {
         this.email = c.getEmail();
+        this.level = c.getLevel();
         this.sex =c.getSex();
         this.city = e.getCity();
         this.orderId = e.getOrderId();
@@ -39,14 +40,14 @@ public class CustomerOrder implements java.io.Serializable{
 
         this.setSex(UNKNOWN);
         this.setCity(UNKNOWN);
-        this.setLevel(UNKNOWN);
+        this.setLevel(0);
     }
 
-    public String getLevel() {
+    public int getLevel() {
         return level;
     }
 
-    public void setLevel(String level) {
+    public void setLevel(int level) {
         this.level = level;
     }
 
