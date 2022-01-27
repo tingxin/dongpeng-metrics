@@ -16,12 +16,15 @@ public class CustomOrderStrSink {
 
         // 部署到你aws kinesis data analytics 以后，无需这个凭证
         // 请注释
-        outputProperties.setProperty(ConsumerConfigConstants.AWS_ACCESS_KEY_ID, Kinesis.accessKey);
-        outputProperties.setProperty(ConsumerConfigConstants.AWS_SECRET_ACCESS_KEY, Kinesis.accessSecret);
+        // outputProperties.setProperty(ConsumerConfigConstants.AWS_ACCESS_KEY_ID,
+        // Kinesis.accessKey);
+        // outputProperties.setProperty(ConsumerConfigConstants.AWS_SECRET_ACCESS_KEY,
+        // Kinesis.accessSecret);
         FlinkKinesisProducer<String> sink = new FlinkKinesisProducer<String>(
-                new SimpleStringSchema(),outputProperties);
+                new SimpleStringSchema(), outputProperties);
 
         sink.setDefaultStream("metrics-ds");
+        sink.setDefaultPartition("0");
         return sink;
     }
 }

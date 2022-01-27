@@ -14,9 +14,10 @@ public class CustomOrderFirehouseSink {
 
         // 部署到你aws kinesis data analytics 以后，无需这个凭证
         // 请注释
-        outputProperties.setProperty(ConsumerConfigConstants.AWS_ACCESS_KEY_ID, Kinesis.accessKey);
-        outputProperties.setProperty(ConsumerConfigConstants.AWS_SECRET_ACCESS_KEY, Kinesis.accessSecret);
-
+        // outputProperties.setProperty(ConsumerConfigConstants.AWS_ACCESS_KEY_ID,
+        // Kinesis.accessKey);
+        // outputProperties.setProperty(ConsumerConfigConstants.AWS_SECRET_ACCESS_KEY,
+        // Kinesis.accessSecret);
 
         FlinkKinesisFirehoseProducer<String> sink = new FlinkKinesisFirehoseProducer<>("customer_order_ds",
                 new SimpleStringSchema(), outputProperties);

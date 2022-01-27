@@ -20,7 +20,6 @@ import org.apache.flink.streaming.api.functions.async.RichAsyncFunction;
 import java.util.Collection;
 import java.util.Map;
 
-
 public abstract class AbstractAsyncWithCacheFunction<I, O, C> extends RichAsyncFunction<I, O> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAsyncWithCacheFunction.class);
     private final DBConf dbConf;
@@ -64,11 +63,11 @@ public abstract class AbstractAsyncWithCacheFunction<I, O, C> extends RichAsyncF
         opt.setWorkerPoolSize(config.getWorkPoolSize());
         opt.setEventLoopPoolSize(config.getEventLoopPoolSize());
 
-        FileSystemOptions fileOption = opt.getFileSystemOptions();
-        if (fileOption == null) {
-            fileOption = new FileSystemOptions();
-        }
-        fileOption.setFileCacheDir("~/temp/vertx-cache");
+        // FileSystemOptions fileOption = opt.getFileSystemOptions();
+        // if (fileOption == null) {
+        // fileOption = new FileSystemOptions();
+        // }
+        // fileOption.setFileCacheDir("~/temp/vertx-cache");
 
         Vertx vertx = Vertx.vertx(opt);
         JsonObject jsonObject = new JsonObject()
@@ -82,10 +81,10 @@ public abstract class AbstractAsyncWithCacheFunction<I, O, C> extends RichAsyncF
 
     @Override
     public void close() throws Exception {
-        if(sqlClient !=null) {
+        if (sqlClient != null) {
             sqlClient.close();
         }
-        if(cache!=null){
+        if (cache != null) {
             cache.invalidateAll();
         }
 
@@ -100,7 +99,6 @@ public abstract class AbstractAsyncWithCacheFunction<I, O, C> extends RichAsyncF
     protected abstract void handleSuccess(I input, ResultFuture<O> output, ResultSet resultSet);
 
     protected abstract void handleFailure(I input, ResultFuture<O> output);
-
 
     protected void process(I input, ResultFuture<O> output, SQLConnection conn, String sql, int retryNum) {
         conn.query(sql, queryResult -> {
@@ -129,7 +127,7 @@ public abstract class AbstractAsyncWithCacheFunction<I, O, C> extends RichAsyncF
             return;
         }
         String sql = buildSQL(i);
-        if(sql==null || sql.isEmpty()) {
+        if (sql == null || sql.isEmpty()) {
             handleFailure(i, resultFuture);
             return;
         }
