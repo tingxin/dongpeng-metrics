@@ -17,18 +17,15 @@ import org.apache.flink.streaming.api.functions.async.ResultFuture;
 
 import java.util.*;
 
-
 public class GetCompanyDetailFunc extends AbstractAsyncWithCacheFunction<OrderEvent, CustomerOrder, Customer> {
         private static final Logger LOGGER = LoggerFactory.getLogger(GetCompanyDetailFunc.class);
         private static final String SQLSTS = "SELECT sex, level FROM customer where email = '%s'";
-
 
         private static final String METRIC_NAME_ASYNC_CALL_SUCCESS_COUNT = "metric.async.GetCompanyDetailFunc.success";
         private static final String METRIC_NAME_ASYNC_CALL_FAIL_COUNT = "metric.async.GetCompanyDetailFunc.fail";
 
         private transient Counter successCounter;
         private transient Counter failCounter;
-
 
         public GetCompanyDetailFunc(RedshiftConf conf, CacheConf cacheConf) {
                 super(conf, cacheConf);
@@ -39,11 +36,11 @@ public class GetCompanyDetailFunc extends AbstractAsyncWithCacheFunction<OrderEv
                 super.open(parameters);
                 super.open(parameters);
                 successCounter = getRuntimeContext()
-                        .getMetricGroup()
-                        .counter(METRIC_NAME_ASYNC_CALL_SUCCESS_COUNT);
+                                .getMetricGroup()
+                                .counter(METRIC_NAME_ASYNC_CALL_SUCCESS_COUNT);
                 failCounter = getRuntimeContext()
-                        .getMetricGroup()
-                        .counter(METRIC_NAME_ASYNC_CALL_FAIL_COUNT);
+                                .getMetricGroup()
+                                .counter(METRIC_NAME_ASYNC_CALL_FAIL_COUNT);
         }
 
         @Override
@@ -61,7 +58,8 @@ public class GetCompanyDetailFunc extends AbstractAsyncWithCacheFunction<OrderEv
         @Override
         protected Pair<Boolean, Map<String, Customer>> getCachedRecord(OrderEvent input) {
 
-                Map<String, Customer> cacheMap = getCache().getAllPresent(Collections.singletonList(input.getUserMail()));
+                Map<String, Customer> cacheMap = getCache()
+                                .getAllPresent(Collections.singletonList(input.getUserMail()));
                 if (cacheMap.isEmpty()) {
                         return Pair.of(false, null);
                 }
@@ -76,7 +74,7 @@ public class GetCompanyDetailFunc extends AbstractAsyncWithCacheFunction<OrderEv
                         String sex = row.getString("sex");
                         int level = row.getInteger("level");
 
-                        Customer m = new Customer(input.getUserMail(), sex,level);
+                        Customer m = new Customer(input.getUserMail(), sex, level);
                         CustomerOrder co = new CustomerOrder(m, input);
 
                         output.complete(Collections.singletonList(co));
@@ -88,25 +86,26 @@ public class GetCompanyDetailFunc extends AbstractAsyncWithCacheFunction<OrderEv
                 }
                 successCounter.inc();
 
-//                // 如果存在一对多的情形需要适当修改 应该这么写
-//
-//                List<CustomerOrder> target = new ArrayList<>();
-//                for (JsonObject row : resultSet.getRows()) {
-//                        String sex = row.getString("sex");
-//                        String level = row.getString("level");
-//
-//                        Customer m = new Customer(input.getUserMail(), sex,level);
-//                        getCache().put(input.getUserMail(), m);
-//
-//                        CustomerOrder co = new CustomerOrder(m, input);
-//                        target.add(co);
-//                        successCounter.inc();
-//                }
-//                output.complete(target);
+                // // 如果存在一对多的情形需要适当修改 应该这么写
+                //
+                // List<CustomerOrder> target = new ArrayList<>();
+                // for (JsonObject row : resultSet.getRows()) {
+                // String sex = row.getString("sex");
+                // String level = row.getString("level");
+                //
+                // Customer m = new Customer(input.getUserMail(), sex,level);
+                // getCache().put(input.getUserMail(), m);
+                //
+                // CustomerOrder co = new CustomerOrder(m, input);
+                // target.add(co);
+                // successCounter.inc();
+                // }
+                // output.complete(target);
         }
 
         @Override
         protected void handleFailure(OrderEvent input, ResultFuture<CustomerOrder> output) {
+                failCounter.inc();
 
         }
 }

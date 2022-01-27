@@ -1,6 +1,5 @@
 package com.amazonaws.components.output;
 
-import com.amazonaws.bean.CustomerOrder;
 import com.amazonaws.param.Kinesis;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.streaming.connectors.kinesis.FlinkKinesisProducer;
