@@ -38,14 +38,7 @@ public class OrderApp {
 
         DataStream<CustomerOrder> ds = this.attachCustomInfo(input);
 
-        ObjectMapper jsonParser = new ObjectMapper();
-        DataStream<String> bds = ds.map(item -> {
-            byte[] bytes = jsonParser.writeValueAsBytes(item);
-            return new String(bytes);
-        }).disableChaining().name("serialize");
-        // bds.print("output");
-        bds.addSink(CustomOrderStrSink.create()).disableChaining().name("output");
-
+        ds.addSink(CustomOrderSink.kinesis());
     }
 
     DataStream<OrderEvent> addWaterMark(DataStream<OrderEvent> input) {
