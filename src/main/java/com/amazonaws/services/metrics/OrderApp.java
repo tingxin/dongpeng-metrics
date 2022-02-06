@@ -1,19 +1,27 @@
 package com.amazonaws.services.metrics;
 
 import com.amazonaws.bean.CustomerOrder;
+import com.amazonaws.bean.Metric;
 import com.amazonaws.bean.OrderEvent;
 import com.amazonaws.common.CacheConf;
 import com.amazonaws.common.RedshiftConf;
 import com.amazonaws.components.async.GetCompanyDetailFunc;
 import com.amazonaws.components.input.OrderEventSource;
 import com.amazonaws.components.output.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.amazonaws.services.kinesisanalytics.runtime.KinesisAnalyticsRuntime;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.functions.ReduceFunction;
+import org.apache.flink.kinesis.shaded.com.amazonaws.services.dynamodbv2.xspec.M;
 import org.apache.flink.streaming.api.datastream.AsyncDataStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Date;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class OrderApp {
@@ -39,6 +47,21 @@ public class OrderApp {
         DataStream<CustomerOrder> ds = this.attachCustomInfo(input);
 
         ds.addSink(CustomOrderSink.kinesis());
+
+
+        DataStream<Metric> amountDs = ds.map(item->new Metric("amount", item.getAmount(), item.getCreateTime()));
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        KeyedStream<Metric,String> dailyDs = amountDs.keyBy(item->formatter.format(item.getOccur()));
+
+        DataStream<Metric> amountMetricDs = dailyDs.reduce(new ReduceFunction<Metric>() {
+            @Override
+            public Metric reduce(Metric t1, Metric t2) throws Exception {
+                Date ts = t1.getOccur().after(t2.getOccur()) ? t1.getOccur(): t2.getOccur();
+                return new Metric(t1.getName(), t1.getValue()+t2.getValue(), ts);
+            }
+        });
+
+        amountMetricDs.addSink(MetricSink.kinesis());
     }
 
     DataStream<OrderEvent> addWaterMark(DataStream<OrderEvent> input) {
@@ -67,4 +90,5 @@ public class OrderApp {
                 asyncCapacity).disableChaining().name("anyc custom");
         return ds;
     }
+
 }
