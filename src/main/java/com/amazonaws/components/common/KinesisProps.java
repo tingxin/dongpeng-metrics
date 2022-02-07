@@ -1,4 +1,4 @@
-package com.amazonaws.components.output;
+package com.amazonaws.components.common;
 
 import com.amazonaws.param.Kinesis;
 import org.apache.flink.streaming.connectors.kinesis.config.ConsumerConfigConstants;

@@ -24,4 +24,13 @@ public class Metric {
     public Date getOccur() {
         return occur;
     }
+
+    @Override
+    public String toString() {
+        return "Metric{" +
+                "name='" + name + '\'' +
+                ", value=" + value +
+                ", occur=" + occur +
+                '}';
+    }
 }

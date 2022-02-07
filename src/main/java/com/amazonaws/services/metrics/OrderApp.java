@@ -62,6 +62,7 @@ public class OrderApp {
         });
 
         amountMetricDs.addSink(MetricSink.kinesis());
+/*        amountMetricDs.print("output");*/
     }
 
     DataStream<OrderEvent> addWaterMark(DataStream<OrderEvent> input) {
