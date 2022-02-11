@@ -36,7 +36,7 @@ public class OrderApp {
         // Map<String, Properties> applicationProperties =
         // KinesisAnalyticsRuntime.getApplicationProperties();
         // Properties runtime = applicationProperties.get("runtime");
-        // String inputSourceName = runtime.getProperty("input");
+        // String inputSourceName = runtime.getProperty("secret");
 
         // set up the streaming execution environment
 
