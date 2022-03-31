@@ -8,10 +8,8 @@ import com.amazonaws.common.RedshiftConf;
 import com.amazonaws.components.async.GetCompanyDetailFunc;
 import com.amazonaws.components.input.OrderEventSource;
 import com.amazonaws.components.output.*;
-import com.amazonaws.services.kinesisanalytics.runtime.KinesisAnalyticsRuntime;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.ReduceFunction;
-import org.apache.flink.kinesis.shaded.com.amazonaws.services.dynamodbv2.xspec.M;
 import org.apache.flink.streaming.api.datastream.AsyncDataStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
@@ -20,8 +18,6 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
-import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class OrderApp {
@@ -41,12 +37,11 @@ public class OrderApp {
         // set up the streaming execution environment
 
         DataStream<OrderEvent> input = OrderEventSource.create(env);
-
         input = this.addWaterMark(input);
 
         DataStream<CustomerOrder> ds = this.attachCustomInfo(input);
 
-        ds.addSink(CustomOrderSink.firehouse());
+        // ds.addSink(CustomOrderSink.firehouse()).name("orderToFirehouse");
 
         DataStream<Metric> amountDs = ds.map(item -> new Metric("amount", item.getAmount(), item.getCreateTime()));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -60,7 +55,7 @@ public class OrderApp {
             }
         });
 
-        amountMetricDs.addSink(MetricSink.firehouse());
+        amountMetricDs.addSink(MetricSink.firehouse()).name("metricToFirehouse");
         /* amountMetricDs.print("output"); */
     }
 
