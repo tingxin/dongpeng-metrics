@@ -41,7 +41,7 @@ public class OrderApp {
 
         DataStream<CustomerOrder> ds = this.attachCustomInfo(input);
 
-        // ds.addSink(CustomOrderSink.firehouse()).name("orderToFirehouse");
+        ds.addSink(CustomOrderSink.firehouse()).name("orderToFirehouse");
 
         DataStream<Metric> amountDs = ds.map(item -> new Metric("amount", item.getAmount(), item.getCreateTime()));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

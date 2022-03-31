@@ -8,13 +8,14 @@ import com.amazonaws.services.kinesisanalytics.flink.connectors.serialization.Ki
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CustomOrderFirehouseSchema implements KinesisFirehoseSerializationSchema<CustomerOrder> {
-
+    ObjectMapper jsonParser;
+    public CustomOrderFirehouseSchema() {
+        this.jsonParser =  new ObjectMapper();
+    }
     @Override
     public ByteBuffer serialize(CustomerOrder element) {
-        ObjectMapper jsonParser = new ObjectMapper();
-
         try {
-            byte[] bytes = jsonParser.writeValueAsBytes(element);
+            byte[] bytes = this.jsonParser.writeValueAsBytes(element);
             return ByteBuffer.wrap(bytes);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
