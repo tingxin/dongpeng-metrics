@@ -12,6 +12,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.streaming.connectors.kinesis.FlinkKinesisConsumer;
+import org.apache.flink.streaming.connectors.kinesis.config.ConsumerConfigConstants;
 import org.apache.flink.util.Collector;
 
 import java.text.SimpleDateFormat;
@@ -21,7 +22,9 @@ import java.util.Properties;
 public class OrderEventSource {
     public static DataStream<OrderEvent> create(StreamExecutionEnvironment env) {
         Properties properties = KinesisProps.outputProperties();
-
+        // 这两个参数通运行时参数传递过来
+        properties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "AT_TIMESTAMP");
+        properties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_TIMESTAMP, "1648732214.000");
         DataStream<String> strDs = env
                 .addSource(new FlinkKinesisConsumer<>(Kinesis.streamOrder, new SimpleStringSchema(), properties));
 
