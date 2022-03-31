@@ -2,6 +2,7 @@ package com.amazonaws.components.output;
 
 import com.amazonaws.bean.CustomerOrder;
 import com.amazonaws.components.common.KinesisProps;
+import com.amazonaws.components.schema.CustomOrderFirehouseSchema;
 import com.amazonaws.components.schema.CustomerOrderSchema;
 import com.amazonaws.param.Kinesis;
 import com.amazonaws.services.kinesisanalytics.flink.connectors.producer.FlinkKinesisFirehoseProducer;
@@ -33,9 +34,9 @@ public class CustomOrderSink {
         return sink;
     }
 
-    public static FlinkKinesisFirehoseProducer<String> firehouse() {
+    public static FlinkKinesisFirehoseProducer<CustomerOrder> firehouse() {
         Properties properties = KinesisProps.outputProperties();
-        return new FlinkKinesisFirehoseProducer<>("customer_order_ds",
-                new SimpleStringSchema(), properties);
+        return new FlinkKinesisFirehoseProducer<>(Kinesis.streamDwdCustomerOrder,
+                new CustomOrderFirehouseSchema(), properties);
     }
 }

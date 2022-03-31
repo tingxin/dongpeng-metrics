@@ -16,13 +16,11 @@ import org.apache.flink.util.Collector;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Properties;
 
 public class OrderEventSource {
     public static DataStream<OrderEvent> create(StreamExecutionEnvironment env) {
         Properties properties = KinesisProps.outputProperties();
-
 
         DataStream<String> strDs = env
                 .addSource(new FlinkKinesisConsumer<>(Kinesis.streamOrder, new SimpleStringSchema(), properties));
@@ -44,10 +42,13 @@ public class OrderEventSource {
                         OrderEvent item = OrderEventHelper.createBy(orderTable, formatter);
                         collector.collect(item);
                         break;
-                    /*case "demo.otherYourNeededTable":
-                        // 使用边侧输出获取其他数据流
-                        // 参考 https://nightlies.apache.org/flink/flink-docs-release-1.14/docs/dev/datastream/side_output/
-                        context.output();*/
+                    /*
+                     * case "demo.otherYourNeededTable":
+                     * // 使用边侧输出获取其他数据流
+                     * // 参考 https://nightlies.apache.org/flink/flink-docs-release-1.14/docs/dev/
+                     * datastream/side_output/
+                     * context.output();
+                     */
                     default:
                         break;
 

@@ -1,6 +1,5 @@
 package com.amazonaws.components.schema;
 
-import com.amazonaws.bean.CustomerOrder;
 import com.amazonaws.bean.Metric;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,4 +18,3 @@ public class MetricSchema implements SerializationSchema<Metric> {
         return new byte[0];
     }
 }
-

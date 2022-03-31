@@ -46,23 +46,22 @@ public class OrderApp {
 
         DataStream<CustomerOrder> ds = this.attachCustomInfo(input);
 
-        ds.addSink(CustomOrderSink.kinesis());
+        ds.addSink(CustomOrderSink.firehouse());
 
-
-        DataStream<Metric> amountDs = ds.map(item->new Metric("amount", item.getAmount(), item.getCreateTime()));
+        DataStream<Metric> amountDs = ds.map(item -> new Metric("amount", item.getAmount(), item.getCreateTime()));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        KeyedStream<Metric,String> dailyDs = amountDs.keyBy(item->formatter.format(item.getOccur()));
+        KeyedStream<Metric, String> dailyDs = amountDs.keyBy(item -> formatter.format(item.getOccur()));
 
         DataStream<Metric> amountMetricDs = dailyDs.reduce(new ReduceFunction<Metric>() {
             @Override
             public Metric reduce(Metric t1, Metric t2) throws Exception {
-                Date ts = t1.getOccur().after(t2.getOccur()) ? t1.getOccur(): t2.getOccur();
-                return new Metric(t1.getName(), t1.getValue()+t2.getValue(), ts);
+                Date ts = t1.getOccur().after(t2.getOccur()) ? t1.getOccur() : t2.getOccur();
+                return new Metric(t1.getName(), t1.getValue() + t2.getValue(), ts);
             }
         });
 
-        amountMetricDs.addSink(MetricSink.kinesis());
-/*        amountMetricDs.print("output");*/
+        amountMetricDs.addSink(MetricSink.firehouse());
+        /* amountMetricDs.print("output"); */
     }
 
     DataStream<OrderEvent> addWaterMark(DataStream<OrderEvent> input) {
@@ -77,7 +76,7 @@ public class OrderApp {
     DataStream<CustomerOrder> attachCustomInfo(DataStream<OrderEvent> input) {
         RedshiftConf redshiftConfig = new RedshiftConf();
         redshiftConfig.setJdbcUri(
-                "jdbc:redshift://redshift-cluster-weige.cmnyuhfynqj7.cn-northwest-1.redshift.amazonaws.com.cn:5439/dev");
+                "jdbc:redshift://redshift-cluster-demo.cmnyuhfynqj7.cn-northwest-1.redshift.amazonaws.com.cn:5439/dev");
         redshiftConfig.setUserName("admin");
         redshiftConfig.setPassword("Demo1234");
         CacheConf CacheConfig = new CacheConf(Duration.ofDays(1), 10000);
