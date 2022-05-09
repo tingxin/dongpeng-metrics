@@ -14,6 +14,9 @@ import org.apache.flink.streaming.api.datastream.AsyncDataStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.WindowAssigner;
+import org.apache.flink.streaming.api.windowing.time.Time;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -32,30 +35,30 @@ public class OrderApp {
         // Map<String, Properties> applicationProperties =
         // KinesisAnalyticsRuntime.getApplicationProperties();
         // Properties runtime = applicationProperties.get("runtime");
-        // String inputSourceName = runtime.getProperty("secret");
+        // String inputSourceName = runtime.getProperty("beginTimestampe");
 
         // set up the streaming execution environment
 
         DataStream<OrderEvent> input = OrderEventSource.create(env);
-        input = this.addWaterMark(input);
+//        input = this.addWaterMark(input);
 
-        DataStream<CustomerOrder> ds = this.attachCustomInfo(input);
+//      DataStream<CustomerOrder> ds = this.attachCustomInfo(input);
 
-        ds.addSink(CustomOrderSink.firehouse()).name("orderToFirehouse");
+        input.addSink(OrderEventSink.firehouse()).name("eventToFirehouse");
 
-        DataStream<Metric> amountDs = ds.map(item -> new Metric("amount", item.getAmount(), item.getCreateTime()));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        KeyedStream<Metric, String> dailyDs = amountDs.keyBy(item -> formatter.format(item.getOccur()));
-
-        DataStream<Metric> amountMetricDs = dailyDs.reduce(new ReduceFunction<Metric>() {
-            @Override
-            public Metric reduce(Metric t1, Metric t2) throws Exception {
-                Date ts = t1.getOccur().after(t2.getOccur()) ? t1.getOccur() : t2.getOccur();
-                return new Metric(t1.getName(), t1.getValue() + t2.getValue(), ts);
-            }
-        });
-
-        amountMetricDs.addSink(MetricSink.firehouse()).name("metricToFirehouse");
+//        DataStream<Metric> amountDs = ds.map(item -> new Metric("amount", item.getAmount(), item.getCreateTime()));
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//        KeyedStream<Metric, String> dailyDs = amountDs.keyBy(item -> formatter.format(item.getOccur()));
+//
+//        DataStream<Metric> amountMetricDs = dailyDs.reduce(new ReduceFunction<Metric>() {
+//            @Override
+//            public Metric reduce(Metric t1, Metric t2) throws Exception {
+//                Date ts = t1.getOccur().after(t2.getOccur()) ? t1.getOccur() : t2.getOccur();
+//                return new Metric(t1.getName(), t1.getValue() + t2.getValue(), ts);
+//            }
+//        });
+//
+//        amountMetricDs.addSink(MetricSink.firehouse()).name("metricToFirehouse");
         /* amountMetricDs.print("output"); */
     }
 
