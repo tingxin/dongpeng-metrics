@@ -40,7 +40,7 @@ public class OrderApp {
         // set up the streaming execution environment
 
         DataStream<OrderEvent> input = OrderEventSource.create(env);
-//        input = this.addWaterMark(input);
+        input = this.addWaterMark(input);
 
 //      DataStream<CustomerOrder> ds = this.attachCustomInfo(input);
 
