@@ -18,7 +18,4 @@ public class DemoJob {
         env.execute("Flink Streaming Java API Skeleton");
     }
 
-
-
-
 }
